@@ -701,3 +701,6 @@ def set_players_hands(dataframe):
     print('Filling manuale dei valori mancanti:')
     print('HandA e HandB settati ancora a NaN:' + str(len(dataframe[dataframe['HandA'].isna()]['Winner'].append(
         dataframe[dataframe['HandB'].isna()]['Loser']).unique())) + '\n')
+
+    dataframe['HandA'] = dataframe['HandA'].apply(lambda x: 0 if x == 'R' else 1)
+    dataframe['HandB'] = dataframe['HandB'].apply(lambda x: 0 if x == 'R' else 1)
