@@ -151,6 +151,7 @@ def set_played_matches(dataframe):
     dataframe['WonRatioA'] = won_a
     dataframe['WonRatioB'] = won_b
 
+    dataframe['PlayedA>PlayedB'] = dataframe.apply(lambda x: int(x['PlayedA'] > x['PlayedB']), axis=1)
     dataframe['WonRatioA>WonRatioB'] = dataframe.apply(lambda x: int(x['WonRatioA'] > x['WonRatioB']), axis=1)
 
 
@@ -205,6 +206,8 @@ def set_played_matches_by_court(dataframe):
     dataframe['WonRatioCourtA'] = won_court_a
     dataframe['WonRatioCourtB'] = won_court_b
 
+    dataframe['PlayedCourtA>PlayedCourtB'] = dataframe.apply(
+        lambda x: int(x['PlayedCourtA'] > x['PlayedCourtB']), axis=1)
     dataframe['WonRatioCourtA>WonRatioCourtB'] = dataframe.apply(
         lambda x: int(x['WonRatioCourtA'] > x['WonRatioCourtB']), axis=1)
 
@@ -214,36 +217,23 @@ def set_played_matches_by_court(dataframe):
 
 def set_players_last_5_statistics(dataframe):
     def get_player_last_stats(p, w):
-        if len(p['1']) == 0:
-            w['5_1Mean'] += [0]
-            w['5_2Mean'] += [0]
-            w['5_3Mean'] += [0]
-            w['5_4Mean'] += [0]
-            w['5_5Mean'] += [0]
+        if len(p['games']) == 0:
+            w['5_GamesMean'] += [0]
+        else:
+            w['5_GamesMean'] += [np.mean(p['games'])]
+
+        if len(p['sets']) == 0:
             w['5_setsMean'] += [0]
         else:
-            w['5_1Mean'] += [np.mean(p['1'])]
-            w['5_2Mean'] += [np.mean(p['2'])]
-            w['5_3Mean'] += [np.mean(p['3'])]
-            w['5_4Mean'] += [np.mean(p['4'])]
-            w['5_5Mean'] += [np.mean(p['5'])]
             w['5_setsMean'] += [np.mean(p['sets'])]
 
-    w5 = {'5_1Mean': [],
-          '5_2Mean': [],
-          '5_3Mean': [],
-          '5_4Mean': [],
-          '5_5Mean': [],
+    w5 = {'5_GamesMean': [],
           '5_setsMean': []}
 
-    l5 = {'5_1Mean': [],
-          '5_2Mean': [],
-          '5_3Mean': [],
-          '5_4Mean': [],
-          '5_5Mean': [],
+    l5 = {'5_GamesMean': [],
           '5_setsMean': []}
 
-    players = {p: {'1': [], '2': [], '3': [], '4': [], '5': [], 'sets': []} for p in
+    players = {p: {'games': [], 'sets': []} for p in
                dataframe['Winner'].append(dataframe['Loser']).unique()}
 
     for r in dataframe.itertuples():
@@ -251,32 +241,22 @@ def set_players_last_5_statistics(dataframe):
 
         get_player_last_stats(players[r.Loser], l5)
 
-        players[r.Winner]['1'] = (players[r.Winner]['1'] + [r.W1])[-10:]
-        players[r.Winner]['2'] = (players[r.Winner]['2'] + [r.W2])[-10:]
-        players[r.Winner]['3'] = (players[r.Winner]['3'] + [r.W3])[-10:]
-        players[r.Winner]['4'] = (players[r.Winner]['4'] + [r.W4])[-10:]
-        players[r.Winner]['5'] = (players[r.Winner]['5'] + [r.W5])[-10:]
-        players[r.Winner]['sets'] = (players[r.Winner]['sets'] + [r.Wsets])[-10:]
+        players[r.Winner]['games'] = (players[r.Winner]['games'] + [r.W1 + r.W2 + r.W3 + r.W4 + r.W5])[-5:]
+        players[r.Winner]['sets'] = (players[r.Winner]['sets'] + [r.Wsets])[-5:]
 
-        players[r.Loser]['1'] = (players[r.Loser]['1'] + [r.L1])[-10:]
-        players[r.Loser]['2'] = (players[r.Loser]['2'] + [r.L2])[-10:]
-        players[r.Loser]['3'] = (players[r.Loser]['3'] + [r.L3])[-10:]
-        players[r.Loser]['4'] = (players[r.Loser]['4'] + [r.L4])[-10:]
-        players[r.Loser]['5'] = (players[r.Loser]['5'] + [r.L5])[-10:]
-        players[r.Loser]['sets'] = (players[r.Loser]['sets'] + [r.Lsets])[-10:]
+        players[r.Loser]['games'] = (players[r.Loser]['games'] + [r.L1 + r.L2 + r.L3 + r.L4 + r.L5])[-5:]
+        players[r.Loser]['sets'] = (players[r.Loser]['sets'] + [r.Lsets])[-5:]
 
-    dataframe['5_1MeanA'] = w5['5_1Mean']
-    dataframe['5_2MeanA'] = w5['5_2Mean']
-    dataframe['5_3MeanA'] = w5['5_3Mean']
-    dataframe['5_4MeanA'] = w5['5_4Mean']
-    dataframe['5_5MeanA'] = w5['5_5Mean']
+    dataframe['5_gamesMeanA'] = w5['5_GamesMean']
     dataframe['5_setsMeanA'] = w5['5_setsMean']
-    dataframe['5_1MeanB'] = l5['5_1Mean']
-    dataframe['5_2MeanB'] = l5['5_2Mean']
-    dataframe['5_3MeanB'] = l5['5_3Mean']
-    dataframe['5_4MeanB'] = l5['5_4Mean']
-    dataframe['5_5MeanB'] = l5['5_5Mean']
+    dataframe['5_gamesMeanB'] = l5['5_GamesMean']
     dataframe['5_setsMeanB'] = l5['5_setsMean']
+
+    dataframe['5_gamesMeanA>5_gamesMeanB'] = dataframe.apply(
+        lambda x: int(x['5_gamesMeanA'] > x['5_gamesMeanB']), axis=1)
+
+    dataframe['5_setsMeanA>5_setsMeanB'] = dataframe.apply(
+        lambda x: int(x['5_setsMeanA'] > x['5_setsMeanB']), axis=1)
 
 
 def set_hands_statistics(dataframe):
@@ -334,6 +314,8 @@ def set_hands_statistics(dataframe):
     dataframe['WonRatioVsSameHandedA'] = won_vs_same_handed_as_opponent_a
     dataframe['WonRatioVsSameHandedB'] = won_vs_same_handed_as_opponent_b
 
+    dataframe['PlayedVsSameHandedA>PlayedVsSameHandedB'] = dataframe.apply(
+        lambda x: int(x['PlayedVsSameHandedA'] > x['PlayedVsSameHandedB']), axis=1)
     dataframe['WonRatioVsSameHandedA>WonRatioVsSameHandedB'] = dataframe.apply(
         lambda x: int(x['WonRatioVsSameHandedA'] > x['WonRatioVsSameHandedB']), axis=1)
 
