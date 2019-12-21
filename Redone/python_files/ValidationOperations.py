@@ -207,7 +207,7 @@ def get_best_boosted_tree_n_estimators(dataframe, tree_best_features):
 
     accuracies = []
 
-    for n_estimators in range(1, 21):
+    for n_estimators in range(2, 21):
         boosted_dt = AdaBoostClassifier(dt, n_estimators=n_estimators)
 
         boosted_dt.fit(x_train, y_train)
