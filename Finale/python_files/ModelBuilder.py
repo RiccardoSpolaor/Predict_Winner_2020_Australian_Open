@@ -50,6 +50,7 @@ def recalculate_comparisons(dataframe):
     dataframe['RankA>RankB'] = dataframe.apply(lambda x: int(x['RankA'] > x['RankB']), axis=1)
     dataframe['AvgA>AvgB'] = dataframe.apply(lambda x: int(x['AvgA'] > x['AvgB']), axis=1)
     dataframe['MaxA>MaxB'] = dataframe.apply(lambda x: int(x['MaxA'] > x['MaxB']), axis=1)
+    dataframe['PtsA>PtsB'] = dataframe.apply(lambda x : int(x['PtsA'] > x['PtsB']), axis = 1)
 
     dataframe['OpponentsWRatioA>OpponentsWRatioB'] = dataframe.apply(
         lambda x: int(x['OpponentsWRatioA'] > x['OpponentsWRatioB']), axis=1)

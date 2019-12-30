@@ -180,49 +180,6 @@ def plot_estimator_variance_bias_decomposition(n_inst, stats, x_label):
     ax.legend()
 
 
-'''
-def plot_estimator_variance_bias_decomposition(dataframe, estimator, n_tests=20):
-    stats = np.array([])
-
-    x_train, x_valid, y_train, y_valid = train_test_split(dataframe.loc[:, dataframe.columns != 'Winner'],
-                                                          dataframe['Winner'], test_size=0.33, shuffle=False,
-                                                          stratify=None)
-
-    n_inst = range(2, 100, 5)
-    for n in n_inst:
-        y_preds = np.array([])
-
-        for i in range(n_tests):
-            xs, ys = resample(x_train, y_train, n_samples=n)
-
-            # train a decision tree classifier
-            estimator.fit(xs, ys)
-
-            y_pred = estimator.predict(x_valid)
-            y_preds = np.column_stack([y_preds, y_pred]) if y_preds.size else y_pred
-
-        est_bias = (y_valid - np.mean(y_preds, axis=1)) ** 2
-        est_variance = np.var(y_preds, axis=1)
-        est_error = (y_preds - y_valid.values.reshape(-1, 1)) ** 2
-
-        run_stats = np.array([est_error.mean(), est_bias.mean(), est_variance.mean()])
-
-        stats = np.column_stack([stats, run_stats]) if stats.size else run_stats
-
-    fig, ax = plt.subplots(figsize=(15, 10))
-
-    fig.suptitle('Bias$^2$-Variance Decomposition')
-
-    ax.plot(n_inst, stats[0, :], 'o:', label='Error')
-    ax.plot(n_inst, stats[1, :], 'o:', label='Bias$^2$')
-    ax.plot(n_inst, stats[2, :], 'o:', label='Variance')
-    ax.set_xlabel('Number of instances')
-    ax.set_ylabel('Error')
-    ax.grid()
-    ax.legend()
-'''
-
-
 def plot_estimator_accuracy(ax, accuracies, hyperparameter):
     accuracies = np.array(accuracies)
     ax.plot(accuracies[:, 2], accuracies[:, 1], "x:", label="Train")
