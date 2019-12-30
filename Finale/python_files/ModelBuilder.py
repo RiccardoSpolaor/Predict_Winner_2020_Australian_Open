@@ -34,12 +34,6 @@ def rename_columns(dataframe):
 
 
 def get_inverted_dataFrame(dataframe, col_to_invert):
-    print(col_to_invert)
-    # dataframe = dataframe.reset_index(drop=True)
-    # players = dataframe['PlayerA'].value_counts().subtract(
-    #    dataframe['PlayerB'].value_counts(), fill_value=0).sort_values(ascending=False).index.tolist()[:25]
-
-    # col_to_invert += players
     for f in col_to_invert:
         dataframe.iloc[1::2][[f + 'A', f + 'B']] = dataframe.iloc[1::2][[f + 'B', f + 'A']]
     dataframe.loc[1::2, 'Winner'] = 1
