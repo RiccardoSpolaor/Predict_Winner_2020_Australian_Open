@@ -4,7 +4,6 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.utils import resample
-from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
 
@@ -40,39 +39,6 @@ def get_tree_variance_bias_decomposition(dataframe):
         stats = np.column_stack([stats, run_stats]) if stats.size else run_stats
 
     plot_estimator_variance_bias_decomposition(depth, stats, 'Depth')
-
-
-def get_bagged_tree_variance_bias_decomposition(dataframe, dt):
-    n_tests = 3
-    stats = np.array([])
-
-    x_train, x_valid, y_train, y_valid = train_test_split(dataframe.loc[:, dataframe.columns != 'Winner'],
-                                                          dataframe['Winner'], test_size=0.33, shuffle=False,
-                                                          stratify=None)
-
-    n_estimators = range(50, 301, 25)
-    for n in n_estimators:
-        y_preds = np.array([])
-
-        for i in range(n_tests):
-            xs, ys = resample(x_train, y_train, n_samples=int(0.67 * len(y_train)))
-
-            # train a decision tree classifier
-            estimator = BaggingClassifier(dt, n_estimators=n, n_jobs=-1)
-            estimator.fit(xs, ys)
-
-            y_pred = estimator.predict(x_valid)
-            y_preds = np.column_stack([y_preds, y_pred]) if y_preds.size else y_pred
-
-        est_bias = (y_valid - np.mean(y_preds, axis=1)) ** 2
-        est_variance = np.var(y_preds, axis=1)
-        est_error = (y_preds - y_valid.values.reshape(-1, 1)) ** 2
-
-        run_stats = np.array([est_error.mean(), est_bias.mean(), est_variance.mean()])
-
-        stats = np.column_stack([stats, run_stats]) if stats.size else run_stats
-
-    plot_estimator_variance_bias_decomposition(n_estimators, stats, 'Estimators')
 
 
 def get_boosted_tree_variance_bias_decomposition(dataframe, dt):
@@ -288,39 +254,6 @@ def validate_tree_classifier(dataframe):
     hyper_parameters['depth'] = tune_tree_depth(ax[0])
     hyper_parameters['max_features'] = tune_tree_max_features(ax[1], depth=hyper_parameters['depth'])
     return hyper_parameters
-
-
-def validate_bagged_tree_classifier(dataframe, tree_best_features):
-    fig, ax = plt.subplots(figsize=(15, 10))
-    fig.suptitle("Accuracy based on Hyperparameters Tuning")
-
-    dt = tree.DecisionTreeClassifier(max_depth=tree_best_features['depth'],
-                                     max_features=tree_best_features['max_features'])
-
-    x_train, x_valid, y_train, y_valid = train_test_split(dataframe.loc[:, dataframe.columns != 'Winner'],
-                                                          dataframe['Winner'],
-                                                          test_size=0.33,
-                                                          stratify=None, shuffle=False)
-
-    accuracies = []
-
-    for n_estimators in range(50, 301, 25):
-        bagged_dt = BaggingClassifier(dt, n_estimators=n_estimators, n_jobs=-1)
-
-        bagged_dt.fit(x_train, y_train)
-
-        train_acc = accuracy_score(y_true=y_train, y_pred=bagged_dt.predict(x_train))
-        valid_acc = accuracy_score(y_true=y_valid, y_pred=bagged_dt.predict(x_valid))
-        # print ("Estimators: {:2d} - Train Accuracy: {:.3f} - Validation Accuracy: {:.3f} ".format(
-        #    n_estimators,  train_acc, valid_acc))
-
-        accuracies += [[valid_acc, train_acc, n_estimators]]
-
-    plot_estimator_accuracy(ax, accuracies, "Estimators")
-
-    best_accuracy, _, best_n_estimators = max(accuracies)
-    print("Best Number of Estimators:", best_n_estimators, '- Accuracy:', best_accuracy)
-    return best_n_estimators
 
 
 def get_best_boosted_tree_n_estimators(dataframe, tree_best_features):
