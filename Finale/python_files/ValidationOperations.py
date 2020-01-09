@@ -90,7 +90,7 @@ def get_forest_variance_bias_decomposition(dataframe, best_estimators=None):
                 xs, ys = resample(x_train, y_train, n_samples=int(0.67 * len(y_train)))
 
                 # train a decision tree classifier
-                estimator = RandomForestClassifier(n_estimators=n, random_state=13, n_jobs=-1)
+                estimator = RandomForestClassifier(n_estimators=n, n_jobs=-1)
                 estimator.fit(xs, ys)
 
                 y_pred = estimator.predict(x_valid)
@@ -114,8 +114,7 @@ def get_forest_variance_bias_decomposition(dataframe, best_estimators=None):
                 xs, ys = resample(x_train, y_train, n_samples=int(0.67 * len(y_train)))
 
                 # train a decision tree classifier
-                estimator = RandomForestClassifier(n_estimators=best_estimators, max_depth=n,
-                                                   random_state=13, n_jobs=-1)
+                estimator = RandomForestClassifier(n_estimators=best_estimators, max_depth=n, n_jobs=-1)
                 estimator.fit(xs, ys)
 
                 y_pred = estimator.predict(x_valid)
