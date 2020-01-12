@@ -56,7 +56,6 @@ def get_boosted_tree_variance_bias_decomposition(dataframe, dt):
         for i in range(n_tests):
             xs, ys = resample(x_train, y_train, n_samples=int(0.67 * len(y_train)))
 
-            # train a decision tree classifier
             estimator = AdaBoostClassifier(dt, n_estimators=n)
             estimator.fit(xs, ys)
 
@@ -89,7 +88,6 @@ def get_forest_variance_bias_decomposition(dataframe, best_estimators=None):
             for i in range(n_tests):
                 xs, ys = resample(x_train, y_train, n_samples=int(0.67 * len(y_train)))
 
-                # train a decision tree classifier
                 estimator = RandomForestClassifier(n_estimators=n, n_jobs=-1)
                 estimator.fit(xs, ys)
 
@@ -113,7 +111,6 @@ def get_forest_variance_bias_decomposition(dataframe, best_estimators=None):
             for i in range(n_tests):
                 xs, ys = resample(x_train, y_train, n_samples=int(0.67 * len(y_train)))
 
-                # train a decision tree classifier
                 estimator = RandomForestClassifier(n_estimators=best_estimators, max_depth=n, n_jobs=-1)
                 estimator.fit(xs, ys)
 
@@ -209,8 +206,6 @@ def validate_tree_classifier(dataframe):
 
             train_acc = accuracy_score(y_true=y_train, y_pred=dt.predict(x_train))
             valid_acc = accuracy_score(y_true=y_valid, y_pred=dt.predict(x_valid))
-            # print ("Depth: {:2d} - Train Accuracy: {:.3f} - Validation Accuracy: {:.3f} ".format(
-            #    max_depth,  train_acc, valid_acc))
 
             accuracies += [[valid_acc, train_acc, max_depth]]
 
@@ -235,8 +230,6 @@ def validate_tree_classifier(dataframe):
 
             train_acc = accuracy_score(y_true=y_train, y_pred=dt.predict(x_train))
             valid_acc = accuracy_score(y_true=y_valid, y_pred=dt.predict(x_valid))
-            # print ("Max Features: {:2d} - Train Accuracy: {:.3f} - Validation Accuracy: {:.3f} ".format(
-            #    max_features,  train_acc, valid_acc))
 
             accuracies += [[valid_acc, train_acc, max_features]]
 
@@ -304,8 +297,6 @@ def validate_forest_classifier(dataframe):
             train_acc = accuracy_score(y_true=y_train, y_pred=rf.predict(x_train))
             valid_acc = accuracy_score(y_true=y_valid, y_pred=rf.predict(x_valid))
             accuracies += [[valid_acc, train_acc, estimators]]
-            # print ("\t Estimators: {:2d} - Validation Accuracy: {:.3f}".format(
-            #    estimators, valid_acc))
 
         plot_estimator_accuracy(ax, accuracies, "Estimators")
 
@@ -330,8 +321,6 @@ def validate_forest_classifier(dataframe):
             train_acc = accuracy_score(y_true=y_train, y_pred=rf.predict(x_train))
             valid_acc = accuracy_score(y_true=y_valid, y_pred=rf.predict(x_valid))
             accuracies += [[valid_acc, train_acc, max_depth]]
-            # print ("\t Depth: {:2d} - Validation Accuracy: {:.3f}".format(
-            #    max_depth, valid_acc))
 
         plot_estimator_accuracy(ax, accuracies, "Depth")
         best_accuracy, _, best_depth = max(accuracies)

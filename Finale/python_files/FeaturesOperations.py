@@ -1,11 +1,10 @@
-# Setto le statistiche tra giocatore 1 e 2 nel passato prima di quel match:
-# Quante partite avevano giocato in precedenza giocatore A e giocatore B (OpponentsPlayed)
-# Rapporto Vittorie/(Partite Giocate Tot) Tra i 2 giocatori (OpponentsWRatioA e OpponentsWRatioB)
 import itertools
 import numpy as np
 import pandas as pd
 
-
+# Setto le statistiche tra giocatore 1 e 2 nel passato prima di quel match:
+# Quante partite avevano giocato in precedenza giocatore A e giocatore B (OpponentsPlayed)
+# Rapporto Vittorie/(Partite Giocate Tot) Tra i 2 giocatori (OpponentsWRatioA e OpponentsWRatioB)
 def set_player_a_vs_player_b_statistics(dataframe):
     opponents_played = []
     opponents_wratio_a = []
@@ -212,8 +211,8 @@ def set_played_matches_by_court(dataframe):
         lambda x: int(x['WonRatioCourtA'] > x['WonRatioCourtB']), axis=1)
 
 
-# Calcolo la media dei game vinti del 1o 2o 3o 4o 5o set per le ultime 10 partite per quel giocatore e i set vinti
-# per le ultime 10 partite del giocatore
+# Calcolo la media dei game vinti del 1o 2o 3o 4o set per le ultime 5 partite per quel giocatore e i set vinti
+# per le ultime 5 partite del giocatore
 
 def set_players_last_5_statistics(dataframe):
     def get_player_last_stats(p, w):
